@@ -34,7 +34,8 @@ export data_dir=$icedrift_dir/icedrift_data
 export prod_dir=$icedrift_dir/icedrift_product
 
 export run_mode=ser # op:current date or ser:date according to given date (see below)
-export date_mode=start  # start:date1 as ref;  stop:date2 as ref      
+
+export date_mode=stop  # start:date1 as ref;  stop:date2 as ref      
 
 #  gdal_edit.py  gdalwarp gdal_translate  -  make sure you have those commands 
 #export gdal_exec=
@@ -68,9 +69,11 @@ echo "0" > $ICD_EXIT_STATUS
 case $run_mode in
 "ser")
 echo -e "${GREEN}  runmode:  $run_mode  ${NC} "
-yy_in=2021
-mm_in=02
-dd_in=16
+
+ yy_in=2021
+ mm_in=02
+ dd_in=16
+
   dte="$yy_in-$mm_in-$dd_in"                      # input date
   sdte=`date --date "$dte" +"%Y-%m-%d"`;;          # new date
 "op")

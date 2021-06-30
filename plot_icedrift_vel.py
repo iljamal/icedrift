@@ -1,4 +1,5 @@
 #!/bin/python
+# $python_exec plot_icedrift_vel.py NCFILE  PLOTDIR 
 import sys
 import matplotlib as mpl
 import matplotlib.pylab as plt
@@ -6,8 +7,9 @@ from netCDF4 import Dataset
 import numpy as np
 from mpl_toolkits.basemap import Basemap
 from pyproj import Proj, transform
-import gdal
-import osr
+#import gdal
+#import osr
+
 
 mpl.use('Agg')
 mpl.rcParams['font.size']=20;
@@ -91,8 +93,6 @@ ax=fig.add_subplot(111);
 ax.contour(lonbx2, latbx2, mask,levels=[0.5],  colors=[(0.5,0.5,0.5) ],alpha=0.2)
 #p0=ax.quiver(xx, yy, uproj,vproj,scale=50)
 p0=ax.pcolor(lonx2, latx2, vel,vmin=0,vmax=0.2)
-
-
 ax.set_xlim([250000, 900000]);
 ax.set_ylim([6300000, 6750000]);
 cbaxes = fig.add_axes([0.75, 0.13, 0.03, 0.3]) 
@@ -116,7 +116,9 @@ ax.set_ylim([6300000, 6750000]);
 cbaxes = fig.add_axes([0.75, 0.13, 0.03, 0.3]) 
 cbl=plt.colorbar(p0,cmap=plt.cm.PuBu,cax=cbaxes)
 cbl.set_label('Ice drift quality [%]')
-fig.savefig(figure_out+'_qual_uv_LEST97.png')
+ax.set_axis_off()
+fig.savefig(figure_out+'_qual_uv_LEST97.tif',bbox_inches='tight')
+#fig.savefig(figure_out+'_qual_uv_LEST97.tif')
 
 
 
@@ -129,22 +131,22 @@ fig=plt.figure(figsize=(15,12));
 ax=fig.add_subplot(111);
 ax.contour(lonbx2, latbx2, mask,levels=[0.5], colors=[(0.5,0.5,0.5) ],alpha=0.2)
 ax.contour(lonx2, latx2, qualf,levels=[30], colors=[(0.5,0.,0.5) ],alpha=0.2)
-
-p0=ax.quiver(lonpx2,latpx2, u_p/vel_p,v_p/vel_p,vel_p,cmap=plt.cm.Blues,scale=50,clim=(-0.2, 0.2))
+p0=ax.quiver(lonpx2,latpx2, u_p/vel_p,v_p/vel_p,vel_p,scale=50,clim=(0, 0.2))
+# Blues
 #p0=ax.pcolor(lonx2, latx2, vel,vmin=0,vmax=0.2)
-#cbaxes = fig.add_axes([0.75, 0.13, 0.03, 0.3]) 
-#cbl=plt.colorbar(p0,cmap=plt.cm.PuBu,cax=cbaxes)
-#cbl.set_label('Ice drift velocity [m/s]')
-#cbl.set_clim(.0, .2)
-
 ax.set_xlim([ 250000,  900000]);
 ax.set_ylim([6300000, 6750000]);
-#plt.set_clim(self, vmin=0., vmax=0.2)
+cbaxes = fig.add_axes([0.75, 0.13, 0.03, 0.3]) 
+bdys=np.arange(0,0.3,0.01)
+cbl=plt.colorbar(p0,cmap=plt.cm.PuBu,cax=cbaxes) #,boundaries=bdys) #,boundaries=[0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1])
+cbl.set_label('Ice drift velocity [m/s]')
 
+#cbl.set_clim(.0, .2)
+#plt.set_clim(self, vmin=0., vmax=0.2)
 ax.set_axis_off()
 fig.savefig(figure_out+'_vect_uv_LEST97.tif',bbox_inches='tight')
 #fig.savefig(figure_out+'_vect_uv_LEST97.png')
-fig.savefig(figure_out+'_vect_uv_LEST97.tif')
+#fig.savefig(figure_out+'_vect_uv_LEST97.tif')
 
 #add: from PIL import Image
 #Image.open(figure_out+'_vect_uv_LEST97.png').save(figure_out+'_vect_uv_LEST97.j2k')
