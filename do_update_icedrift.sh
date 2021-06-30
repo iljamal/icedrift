@@ -1,48 +1,45 @@
 #!/bin/bash
 
-      echo -e "${GREEN} >> conf. icedrift ${NC}" 
+# Color definitions
+RED='\033[0;31m' # RED
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
 
-## local config
-##  MY LIBRARIES
+      echo -e "${YELLOW} >> conf. icedrift ${NC} configure file from  '$1'" 
 
-## if Initiate for crontab execution  set those custom path for hdf/netcdf and cdo libraries
-#export PATH=$HOME/libs/bin/:$PATH
-#export LD_LIBRARY_PATH=$HOME/libs/lib:${LD_LIBRARY_PATH}
-#export LD_RUN_PATH=$HOME/libs/lib:${LD_LIBRARY_PATH}
-#HDFDIR=$HOME/libs/HDF5-1.12.0-Linux/HDF_Group/HDF5/1.12.0/
-#export LD_LIBRARY_PATH=$HDFDIR/lib:${LD_LIBRARY_PATH}
-#export LD_RUN_PATH=$HDFDIR/lib:${LD_RUN_PATH}
-#export PATH=$HDFDIR/bin/:$PATH
+## local config as command line input
+# Check if file exists
+if [ ! -f "$1" ]; then    echo -e " ${RED} ERROR: '$1' does not exist.  ${NC}";    exit
+fi
 
-export python_exec=python3
-export cdo_exec=cdo 
-export ncdump_exec=ncdump 
-# TODO test if executables are working
+## READ  USER  configuation
+source $1
 
-# COPERNICUS username  and password
-export cmems_user=jizotova
-export cmems_pasw=wVMMfa91
+# Check if variables are non-empty and wether the executables exist
+if [[ -z ${cmems_user} ]] ; 
+then     echo -e " ${RED} ERROR: 'cmems_user' variable is empty. Check your configuration in $1  ${NC}";exit; fi
 
-export icedrift_dir=$HOME/icedrift
+if [[ -z ${cdo_exec} ]] ; 
+then    echo -e " ${RED} ERROR: 'cdo_exec' variable is empty. Check your configuration in $1  ${NC}";exit
+else    if ! command -v ${cdo_exec} &> /dev/null; then 	    echo -e " ${RED} ERROR: ${cdo_exec}   could not be found ${NC}";     exit;    fi
+fi
 
-export plot_dir=$icedrift_dir/icedrift_plot
+if [[ -z ${python_exec} ]] ; 
+then    echo -e " ${RED} ERROR: 'python_exec' variable is empty. Check your configuration in $1  ${NC}";exit; 
+else    if ! command -v ${python_exec} &> /dev/null; then 	    echo -e " ${RED} ERROR: ${python_exec}   could not be found${NC}";     exit;    fi
+fi
 
-export raw_dir=$icedrift_dir/icedrift_raw
-
-export data_dir=$icedrift_dir/icedrift_data
-
-export prod_dir=$icedrift_dir/icedrift_product
-
-export run_mode=ser # op:current date or ser:date according to given date (see below)
-
-export date_mode=stop  # start:date1 as ref;  stop:date2 as ref      
-
-#  gdal_edit.py  gdalwarp gdal_translate  -  make sure you have those commands 
+if [[ -z ${ncdump_exec} ]] ; 
+then    echo -e " ${RED} ERROR: 'ncdump_exec' variable is empty. Check your configuration in $1  ${NC}";exit; # fi
+else    if ! command -v ${ncdump_exec} &> /dev/null; then 	    echo -e "  ${RED} ERROR:  ${ncdump_exec}   could not be found${NC}";     exit;    fi
+fi
+# TODO do some more checks ...
 #export gdal_exec=
+echo -e "${GREEN} >>     config done ...  ${NC}"
 
 cd $icedrift_dir
 ls
-# TODO check if executables are working 
 #Create directories 
 echo -e "${GREEN} >>     creating directories ${NC}"
 
@@ -50,10 +47,6 @@ mkdir -p $icedrift_dir $raw_dir $plot_dir $data_dir  $prod_dir
 
 ##  LOG variables
 rm log.*
-RED='\033[0;31m' # RED
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
 
 export log_str="  ~ "
 export log_str_c=" ${GREEN} ~ "
@@ -69,10 +62,11 @@ echo "0" > $ICD_EXIT_STATUS
 case $run_mode in
 "ser")
 echo -e "${GREEN}  runmode:  $run_mode  ${NC} "
-
- yy_in=2021
- mm_in=02
- dd_in=16
+if [[ -z ${yy_in} ]] ; then     echo -e " ${RED} ERROR: 'yy_in' variable is empty. Check your configuration in $1  ${NC}";exit
+fi
+# yy_in=2021
+# mm_in=02
+# dd_in=16
 
   dte="$yy_in-$mm_in-$dd_in"                      # input date
   sdte=`date --date "$dte" +"%Y-%m-%d"`;;          # new date

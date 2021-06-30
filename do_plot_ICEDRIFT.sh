@@ -43,7 +43,7 @@ done
 #cp $plot_dir/Plot_gt_$yy$mm$dd'_vect_uv_LEST97.tif' $prod_dir/
 #cp $plot_dir/Plot_gt_$yy$mm$dd'_qual_uv_LEST97.tif' $prod_dir/
 
-echo  -e  " $log_str :   qgis   $prod_dir/Plot_moduv_LEST97.$tstr2.jp2"
+echo  -e  " $log_str :   qgis   $prod_dir/Plot_gt_${tstr2}_${ptag}_uv_LEST97.tif"
 
 
 #gdal_translate -of JP2OpenJPEG $plot_dir/Plot_gt_$tstr2'_vect_uv_LEST97.tif' $plot_dir/Plot_$tstr2'_vect_uv_LEST97.jp2'
