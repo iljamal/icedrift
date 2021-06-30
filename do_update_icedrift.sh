@@ -39,7 +39,6 @@ fi
 echo -e "${GREEN} >>     config done ...  ${NC}"
 
 cd $icedrift_dir
-ls
 #Create directories 
 echo -e "${GREEN} >>     creating directories ${NC}"
 
